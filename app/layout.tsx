@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import Navbar from './Navbar';
-import Footer from './Footer';
+
 import { siteConfig } from '@/config/site';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -73,13 +72,7 @@ export default function RootLayout({
     // </html>
 
     <html lang='en'>
-      <body className={cn('min-h-screen', inter.className)}>
-        <section className='p-10'>
-          <Navbar />
-          {children}
-        </section>
-        <Footer />
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
