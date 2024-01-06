@@ -3,14 +3,8 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div
-      className='flex flex-col items-center 
-     justify-center py-8  h-[580px]'
-    >
-      <div
-        className='flex flex-col items-center 
-     justify-center '
-      >
+    <div className='flex flex-col items-center justify-center py-8  h-[500px]'>
+      <div className='flex flex-col items-center justify-center'>
         <h1 className='scroll-m-20  leading-[42px] lg:leading-[65px] text-4xl font-extrabold tracking-tight lg:text-5xl text-center'>
           Effortless Task Management with Task Tracker
         </h1>

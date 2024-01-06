@@ -64,12 +64,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={cn('min-h-screen p-10', inter.className)}>
-        <Navbar />
-        <main>{children}</main>
+    // <html lang='en' suppressHydrationWarning>
+    //   <body className={cn('min-h-screen p-10', inter.className)}>
+    //     <Navbar />
+    //     {children}
+    //   </body>
+    //   <Footer />
+    // </html>
+
+    <html lang='en'>
+      <body className={cn('min-h-screen', inter.className)}>
+        <section className='p-10'>
+          <Navbar />
+          {children}
+        </section>
+        <Footer />
       </body>
-      <Footer />
     </html>
   );
 }
