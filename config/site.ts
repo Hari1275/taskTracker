@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: 'Task Management',
+  name: 'Task Tracker',
   author: 'hari',
   description:
     'Stay organized, boost productivity, and collaborate seamlessly with Task Tracker.',
