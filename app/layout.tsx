@@ -1,12 +1,18 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 
 import { siteConfig } from '@/config/site';
 
+import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
-
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
+};
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url.base),
   title: {
@@ -71,8 +77,17 @@ export default function RootLayout({
     //   <Footer />
     // </html>
 
-    <html lang='en'>
-      <body className={inter.className}>{children}</body>
+    <html lang='en' suppressHydrationWarning>
+      <body className={cn('min-h-screen ', inter.className)}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

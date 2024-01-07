@@ -15,7 +15,7 @@ export default function Home() {
           management like never before
         </p>
         <div className='pt-8'>
-          <Button className='text-center '>
+          <Button className='text-center ' asChild>
             <Link href={'/sign-up'}>Get Started for Free</Link>
           </Button>
         </div>

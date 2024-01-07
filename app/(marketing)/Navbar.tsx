@@ -2,6 +2,9 @@ import React from 'react';
 
 import Image from 'next/image';
 import { AvatarPhoto } from '../components/AvatarPhoto';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ModeToggle } from '@/components/mode-toggle';
 function Navbar() {
   return (
     <>
@@ -10,13 +13,21 @@ function Navbar() {
           <Image src='/hk.svg' width={75} height={75} alt='Task Management' />
         </div>
 
-        {/* <p className='p-5'>
+        <div className='p-5'>
+          <div className='flex justify-between items-center gap-4'>
+            <Button size='sm' variant='outline' asChild>
+              <Link href={'/sign-in'}>Login</Link>
+            </Button>
+            <Button className='text-center hidden md:block' asChild>
+              <Link href={'/sign-up'}>Get Started for Free</Link>
+            </Button>
 
-
-        </p> */}
-        <div className='px-5 py-2'>
-          <AvatarPhoto />
+            <ModeToggle />
+          </div>
         </div>
+        {/* <div className='px-5 py-2'>
+          <AvatarPhoto />
+        </div> */}
       </div>
     </>
   );
