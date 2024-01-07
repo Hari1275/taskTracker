@@ -1,5 +1,13 @@
+import { auth } from '@clerk/nextjs';
+import { OrgControl } from './_component/org-control';
+
 const OrganizationIdLayout = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+  return (
+    <>
+      <OrgControl />
+      {children}
+    </>
+  );
 };
 
 export default OrganizationIdLayout;

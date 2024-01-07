@@ -65,7 +65,7 @@ export const Sidebar = ({ storageKey = 't-sidebar-state' }: SidebarProps) => {
 
   return (
     <>
-      <div className='font-medium text-xs flex items-center mb-1'>
+      <div className='font-medium text-xs flex items-center mb-1 border-b border-cyan-300  '>
         <span className='pl-4'>Workspaces</span>
         <Button
           asChild
@@ -82,7 +82,7 @@ export const Sidebar = ({ storageKey = 't-sidebar-state' }: SidebarProps) => {
       <Accordion
         type='multiple'
         defaultValue={defaultAccordionValue}
-        className='space-y-2'
+        className='space-y-4 pb-4'
       >
         {userMemberships.data.map(({ organization }) => (
           <NavItem
@@ -94,6 +94,19 @@ export const Sidebar = ({ storageKey = 't-sidebar-state' }: SidebarProps) => {
           />
         ))}
       </Accordion>
+      {/* <div>
+        <ul className='space-y-4'>
+          <li className=' bg-slate-100 py-2 mt-2 px-2 rounded-md'>
+            Project Management
+          </li>
+          <li className=' bg-slate-100 py-2 mt-2 px-2 rounded-md'>
+            Task Management
+          </li>
+          <li className=' bg-slate-100 py-2 mt-2 px-2 rounded-md'>
+            Client Management
+          </li>
+        </ul>
+      </div> */}
     </>
   );
 };

@@ -57,6 +57,21 @@ export const NavItem = ({
       icon: <CreditCard className='h-4 w-4 mr-2' />,
       href: `/organization/${organization.id}/billing`,
     },
+    {
+      label: 'Project Management',
+      icon: <CreditCard className='h-4 w-4 mr-2' />,
+      href: `/organization/${organization.id}/billing`,
+    },
+    {
+      label: 'Task Management',
+      icon: <CreditCard className='h-4 w-4 mr-2' />,
+      href: `/organization/${organization.id}/billing`,
+    },
+    {
+      label: 'Client Management',
+      icon: <CreditCard className='h-4 w-4 mr-2' />,
+      href: `/organization/${organization.id}/billing`,
+    },
   ];
 
   const onClick = (href: string) => {

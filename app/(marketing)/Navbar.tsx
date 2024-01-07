@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Image from 'next/image';
-import { AvatarPhoto } from '../components/AvatarPhoto';
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/mode-toggle';
