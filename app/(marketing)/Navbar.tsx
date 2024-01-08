@@ -25,9 +25,6 @@ function Navbar() {
             <ModeToggle />
           </div>
         </div>
-        {/* <div className='px-5 py-2'>
-          <AvatarPhoto />
-        </div> */}
       </div>
     </>
   );

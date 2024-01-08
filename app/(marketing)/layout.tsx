@@ -18,14 +18,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <html lang='en' suppressHydrationWarning>
-    //   <body className={cn('min-h-screen p-10', inter.className)}>
-    //     <Navbar />
-    //     {children}
-    //   </body>
-    //   <Footer />
-    // </html>
-
     <div className={cn('min-h-screen', inter.className)}>
       <main className='p-10'>
         <Navbar />
