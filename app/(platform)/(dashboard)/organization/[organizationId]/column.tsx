@@ -30,15 +30,16 @@ export const Column: React.FC<ColumnProps> = ({
 }: ColumnProps) => {
   const columnStyle: React.CSSProperties = {
     border: '1px solid lightgrey',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     borderRadius: '2px',
     padding: '8px',
-    minWidth: '200px', // Set your desired minimum width here
+    minWidth: '350px',
   };
 
   const emptyColumnStyle: React.CSSProperties = {
     ...columnStyle,
-    background: 'lightgrey',
-    minHeight: '100px',
+    background: 'white',
+    minHeight: '350px',
   };
 
   return (
@@ -57,11 +58,7 @@ export const Column: React.FC<ColumnProps> = ({
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  style={{
-                    background: 'lightgrey',
-                    padding: '4px',
-                    minHeight: '100px',
-                  }}
+                  className=' rounded-md min-h-[100px] p-4'
                 >
                   {tasks.map((task, taskIndex) => (
                     <Draggable
@@ -76,19 +73,13 @@ export const Column: React.FC<ColumnProps> = ({
                           {...provided.dragHandleProps}
                           style={{
                             userSelect: 'none',
-                            padding: '16px',
-                            margin: '0 0 8px 0',
-                            minHeight: '50px',
-                            backgroundColor: 'white',
-                            borderRadius: '4px',
-                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
                             ...provided.draggableProps.style,
                           }}
+                          className='flex justify-between items-center p-4 mb-4 h-min-[100px] shadow-[rgba(13,_38,_76,_0.19)_0px_9px_20px] rounded-md'
                         >
-                          <div>{task.content}</div>
+                          <div className='flex flex-wrap w-[350px]'>
+                            {task.content}
+                          </div>
                           <button onClick={() => onDeleteTask(task.id)}>
                             Delete
                           </button>

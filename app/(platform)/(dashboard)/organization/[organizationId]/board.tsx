@@ -1,8 +1,20 @@
 'use client';
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { useStore } from '@/lib/store';
 import { Column } from './column';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 
 interface BoardProps {
   id: string;
@@ -12,6 +24,7 @@ interface BoardProps {
 export const Board = () => {
   const [showModal, setShowModal] = useState(false);
   const [newTaskContent, setNewTaskContent] = useState('');
+  const [newColumnName, setNewColumnName] = useState('');
 
   const openModal = () => {
     setShowModal(true);
@@ -24,6 +37,7 @@ export const Board = () => {
 
   const handleNewTaskSubmit = () => {
     // Generate a new unique task ID
+    console.log('logged');
     const newTaskId = `task-${Object.keys(tasks).length + 1}`;
 
     // Add the new task to the 'To Do' column
@@ -43,19 +57,7 @@ export const Board = () => {
 
     setColumns(newColumns);
     setTasks(newTasks);
-    closeModal();
-  };
-
-  const [showColumnModal, setShowColumnModal] = useState(false);
-  const [newColumnName, setNewColumnName] = useState('');
-
-  const openColumnModal = () => {
-    setShowColumnModal(true);
-  };
-
-  const closeColumnModal = () => {
-    setShowColumnModal(false);
-    setNewColumnName('');
+    setNewTaskContent('');
   };
 
   const handleNewColumnSubmit = () => {
@@ -65,20 +67,26 @@ export const Board = () => {
     // Add the new column to the column order
     const newColumnOrder = [...columnOrder, newColumnId];
 
-    // // Add the new column to the columns list
-    // const newColumns = {
-    //   ...columns,
-    //   [newColumnId]: {
-    //     id: newColumnId,
-    //     title: newColumnName,
-    //     status:'todo',
-    //     taskIds: [],
-    //   },
-    // };
+    // Add the new column to the columns list
+    const newColumns: {
+      [key: string]: {
+        status: 'todo' | 'inprogress' | 'done';
+        id: string;
+        title: string;
+        taskIds: string[];
+      };
+    } = {
+      ...columns,
+      [newColumnId]: {
+        status: 'todo', // Set default status for the new column
+        id: newColumnId,
+        title: newColumnName,
+        taskIds: [],
+      },
+    };
 
-    // setColumnOrder(newColumnOrder);
-    // setColumns(newColumns);
-    closeColumnModal();
+    setColumnOrder(newColumnOrder);
+    setColumns(newColumns);
   };
   const {
     columns,
@@ -114,7 +122,11 @@ export const Board = () => {
     });
 
     setTasks({
-      'task-1': { id: 'task-1', content: 'Take out the garbage' },
+      'task-1': {
+        id: 'task-1',
+        content:
+          'Take out the garbage Take out the garbage Take out the garbage',
+      },
       'task-2': { id: 'task-2', content: 'Watch my favorite show' },
       'task-3': { id: 'task-3', content: 'Charge my phone' },
       'task-4': { id: 'task-4', content: 'Cook dinner' },
@@ -178,7 +190,6 @@ export const Board = () => {
           timestamp: Date.now(),
         };
         setTasks({ ...tasks, [draggableId]: newTask });
-        console.log('new ', newTask);
       }
 
       setColumns({
@@ -189,15 +200,92 @@ export const Board = () => {
     }
   };
 
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewTaskContent(event.target.value);
+  };
+  const handleInputChangeColumn = (event: ChangeEvent<HTMLInputElement>) => {
+    setNewColumnName(event.target.value);
+  };
   return (
     <div>
+      <div className='flex justify-between items-center pb-4'>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button type='submit'> Create Task</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Task</DialogTitle>
+              <DialogDescription>
+                What do you want to get done today?
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className='grid gap-4 py-4'>
+              <div>
+                {/* <Text htmlFor="name" className="text-right">
+              Name
+            </Text> */}
+                <Input
+                  type='text'
+                  id='title'
+                  name='title'
+                  value={newTaskContent}
+                  onChange={handleInputChange}
+                  placeholder='Task title '
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button onClick={handleNewTaskSubmit}>Add Task</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button type='submit'> Create Column</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Column</DialogTitle>
+              {/* <DialogDescription>
+                What do you want to get done today?
+              </DialogDescription> */}
+            </DialogHeader>
+
+            <div className='grid gap-4 py-4'>
+              <div>
+                {/* <Text htmlFor="name" className="text-right">
+              Name
+            </Text> */}
+                <Input
+                  type='text'
+                  id='newColumn'
+                  name='newColumn'
+                  value={newColumnName}
+                  onChange={handleInputChangeColumn}
+                  placeholder='Add newColumn '
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button onClick={handleNewColumnSubmit}>Add Column</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* <Button onClick={openModal}>Add Task</Button> */}
+      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId='board' direction='horizontal' type='column'>
           {(provided) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              style={{ display: 'flex', gap: '16px' }}
+              className='gap-4 sm:flex sm:flex-shrink-0 sm:flex-nowrap '
             >
               {columnOrder.map((columnId, index) => {
                 const column = columns[columnId];
@@ -223,76 +311,6 @@ export const Board = () => {
           )}
         </Droppable>
       </DragDropContext>
-
-      <button onClick={openModal}>Add Task</button>
-      <button onClick={openColumnModal}>Add Column</button>
-
-      {showModal && (
-        <div className='modal'>
-          <div className='modal-content'>
-            <span className='close' onClick={closeModal}>
-              &times;
-            </span>
-            <h2>Add New Task</h2>
-            <input
-              type='text'
-              value={newTaskContent}
-              onChange={(e) => setNewTaskContent(e.target.value)}
-            />
-            <button onClick={handleNewTaskSubmit}>Submit</button>
-          </div>
-        </div>
-      )}
-
-      {showColumnModal && (
-        <div className='modal'>
-          <div className='modal-content'>
-            <span className='close' onClick={closeColumnModal}>
-              &times;
-            </span>
-            <h2>Add New Column</h2>
-            <input
-              type='text'
-              value={newColumnName}
-              onChange={(e) => setNewColumnName(e.target.value)}
-            />
-            <button onClick={handleNewColumnSubmit}>Submit</button>
-          </div>
-        </div>
-      )}
-
-      <style jsx>{`
-        .modal {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-          background-color: #fefefe;
-          padding: 20px;
-          border: 1px solid #888;
-          width: 300px;
-        }
-
-        .close {
-          color: #aaa;
-          float: right;
-          font-size: 28px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-
-        .close:hover {
-          color: black;
-        }
-      `}</style>
     </div>
   );
 };
