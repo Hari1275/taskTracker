@@ -1,9 +1,8 @@
 'use client';
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import { useStore } from '@/lib/store';
 import { Column } from './column';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -14,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface BoardProps {
@@ -22,72 +22,6 @@ interface BoardProps {
 }
 
 export const Board = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [newTaskContent, setNewTaskContent] = useState('');
-  const [newColumnName, setNewColumnName] = useState('');
-
-  const openModal = () => {
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setNewTaskContent('');
-  };
-
-  const handleNewTaskSubmit = () => {
-    // Generate a new unique task ID
-    console.log('logged');
-    const newTaskId = `task-${Object.keys(tasks).length + 1}`;
-
-    // Add the new task to the 'To Do' column
-    const newColumns = {
-      ...columns,
-      'column-1': {
-        ...columns['column-1'],
-        taskIds: [...columns['column-1'].taskIds, newTaskId],
-      },
-    };
-
-    // Add the new task to the tasks list
-    const newTasks = {
-      ...tasks,
-      [newTaskId]: { id: newTaskId, content: newTaskContent },
-    };
-
-    setColumns(newColumns);
-    setTasks(newTasks);
-    setNewTaskContent('');
-  };
-
-  const handleNewColumnSubmit = () => {
-    // Generate a new unique column ID
-    const newColumnId = `column-${Object.keys(columns).length + 1}`;
-
-    // Add the new column to the column order
-    const newColumnOrder = [...columnOrder, newColumnId];
-
-    // Add the new column to the columns list
-    const newColumns: {
-      [key: string]: {
-        status: 'todo' | 'inprogress' | 'done';
-        id: string;
-        title: string;
-        taskIds: string[];
-      };
-    } = {
-      ...columns,
-      [newColumnId]: {
-        status: 'todo', // Set default status for the new column
-        id: newColumnId,
-        title: newColumnName,
-        taskIds: [],
-      },
-    };
-
-    setColumnOrder(newColumnOrder);
-    setColumns(newColumns);
-  };
   const {
     columns,
     tasks,
@@ -97,6 +31,31 @@ export const Board = () => {
     setColumnOrder,
     deleteTask,
   } = useStore();
+  const [newTaskInput, setNewTaskInput] = useState('');
+  const [newColumnName, setNewColumnName] = useState('');
+
+  const handleNewTaskInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTaskInput(e.target.value);
+  };
+  const handleNewTaskSubmit = () => {
+    // Create a new task and add it to the first column
+    const newTaskId = `task-${Object.keys(tasks).length + 1}`;
+    const newTasks = {
+      ...tasks,
+      [newTaskId]: { id: newTaskId, content: newTaskInput },
+    };
+
+    const firstColumnId = columnOrder[0];
+    const firstColumn = columns[firstColumnId];
+    const newColumn = {
+      ...firstColumn,
+      taskIds: [...firstColumn.taskIds, newTaskId],
+    };
+
+    setTasks(newTasks);
+    setColumns({ ...columns, [firstColumnId]: newColumn });
+    setNewTaskInput(''); // Clear the input after submission
+  };
 
   // Initialize state with initialData
   React.useEffect(() => {
@@ -110,34 +69,21 @@ export const Board = () => {
       'column-2': {
         id: 'column-2',
         title: 'In Progress',
-        status: 'todo',
-        taskIds: [],
-      },
-      'column-3': {
-        id: 'column-3',
-        title: 'Done',
-        status: 'done',
+        status: 'inprogress',
         taskIds: [],
       },
     });
 
     setTasks({
-      'task-1': {
-        id: 'task-1',
-        content:
-          'Take out the garbage Take out the garbage Take out the garbage',
-      },
+      'task-1': { id: 'task-1', content: 'Take out the garbage' },
       'task-2': { id: 'task-2', content: 'Watch my favorite show' },
       'task-3': { id: 'task-3', content: 'Charge my phone' },
       'task-4': { id: 'task-4', content: 'Cook dinner' },
     });
 
-    setColumnOrder(['column-1', 'column-2', 'column-3']);
+    setColumnOrder(['column-1', 'column-2']);
   }, [setColumns, setTasks, setColumnOrder]);
-  const onDeleteTask = (taskId: string) => {
-    // Call the deleteTask function from the store
-    deleteTask(taskId);
-  };
+
   const onDragEnd = (result: any) => {
     const { destination, source, draggableId, type } = result;
 
@@ -183,14 +129,6 @@ export const Board = () => {
         ...finish,
         taskIds: finishTaskIds,
       };
-      if (start.id === 'column-1' && finish.id === 'column-2') {
-        const newTask = {
-          ...tasks[draggableId],
-          status: 'inprogress',
-          timestamp: Date.now(),
-        };
-        setTasks({ ...tasks, [draggableId]: newTask });
-      }
 
       setColumns({
         ...columns,
@@ -199,16 +137,30 @@ export const Board = () => {
       });
     }
   };
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewTaskContent(event.target.value);
+  const handleNewColumnNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNewColumnName(e.target.value);
   };
-  const handleInputChangeColumn = (event: ChangeEvent<HTMLInputElement>) => {
-    setNewColumnName(event.target.value);
+  const handleNewColumnSubmit = () => {
+    // Create a new column
+    const newColumnId = `column-${Object.keys(columns).length + 1}`;
+    const newColumn = {
+      id: newColumnId,
+      title: newColumnName,
+      status: 'todo' as 'todo' | 'inprogress' | 'done',
+      taskIds: [],
+    };
+    setColumns({ ...columns, [newColumnId]: newColumn });
+    setColumnOrder([...columnOrder, newColumnId]);
+    setNewColumnName('');
+  };
+  const onDeleteTask = (taskId: string) => {
+    deleteTask(taskId);
   };
   return (
-    <div>
-      <div className='flex justify-between items-center pb-4'>
+    <>
+      <div className='flex gap-4'>
         <Dialog>
           <DialogTrigger asChild>
             <Button type='submit'> Create Task</Button>
@@ -228,11 +180,9 @@ export const Board = () => {
             </Text> */}
                 <Input
                   type='text'
-                  id='title'
-                  name='title'
-                  value={newTaskContent}
-                  onChange={handleInputChange}
-                  placeholder='Task title '
+                  placeholder='Enter task'
+                  value={newTaskInput}
+                  onChange={handleNewTaskInputChange}
                 />
               </div>
             </div>
@@ -262,11 +212,9 @@ export const Board = () => {
             </Text> */}
                 <Input
                   type='text'
-                  id='newColumn'
-                  name='newColumn'
+                  placeholder='Enter column name'
                   value={newColumnName}
-                  onChange={handleInputChangeColumn}
-                  placeholder='Add newColumn '
+                  onChange={handleNewColumnNameChange}
                 />
               </div>
             </div>
@@ -277,15 +225,15 @@ export const Board = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        {/* <Button onClick={openModal}>Add Task</Button> */}
       </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId='board' direction='horizontal' type='column'>
           {(provided) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className='gap-4 sm:flex sm:flex-shrink-0 sm:flex-nowrap '
+              className=' flex flex-1 gap-4'
             >
               {columnOrder.map((columnId, index) => {
                 const column = columns[columnId];
@@ -311,6 +259,6 @@ export const Board = () => {
           )}
         </Droppable>
       </DragDropContext>
-    </div>
+    </>
   );
 };
